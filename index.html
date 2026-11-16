@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORE.MATRIX — Прототипирование лора и сюжета</title>
+    <style>
+        :root {
+            --bg-main: #070b14;
+            --bg-surface: #0d1424;
+            --bg-card: #11192c;
+            --bg-elevated: #17223b;
+            --bg-input: #090e1a;
+            --border-subtle: #1e293b;
+            --border-strong: #334155;
+            --text-main: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --cyan: #06b6d4;
+            --cyan-light: #67e8f9;
+            --cyan-bg: rgba(6, 182, 212, 0.14);
+            --cyan-border: rgba(6, 182, 212, 0.35);
+            --amber: #f59e0b;
+            --amber-light: #fcd34d;
+            --amber-bg: rgba(245, 158, 11, 0.14);
+            --amber-border: rgba(245, 158, 11, 0.35);
+            --purple: #a855f7;
+            --purple-light: #d8b4fe;
+            --purple-bg: rgba(168, 85, 247, 0.14);
+            --purple-border: rgba(168, 85, 247, 0.35);
+            --emerald: #10b981;
+            --emerald-light: #6ee7b7;
+            --emerald-bg: rgba(16, 185, 129, 0.14);
+            --emerald-border: rgba(16, 185, 129, 0.35);
+            --rose: #f43f5e;
+            --rose-light: #fda4af;
+            --rose-bg: rgba(244, 63, 94, 0.14);
+            --rose-border: rgba(244, 63, 94, 0.35);
+            --blue: #3b82f6;
+            --blue-light: #93c5fd;
+            --blue-bg: rgba(59, 130, 246, 0.14);
+            --blue-border: rgba(59, 130, 246, 0.35);
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 12% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 42%),
+                radial-gradient(circle at 88% 15%, rgba(168, 85, 247, 0.07) 0%, transparent 45%),
+                linear-gradient(rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        }
+
+        .container {
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* ================= HEADER ================= */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(7, 11, 20, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 0 10px;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 240px;
+            flex: 1 1 320px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(168, 85, 247, 0.22));
+            border: 1px solid var(--cyan-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan-light);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.16);
+        }
+
+        .brand-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .brand-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+
+        .sys-version {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--cyan);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--emerald-bg);
+            color: var(--emerald-light);
+            border: 1px solid var(--emerald-border);
+        }
+
+        .status-pill.sandbox {
+            background: var(--amber-bg);
+            color: var(--amber-light);
+            border-color: var(--amber-border);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        .project-title-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 700;
+            padding: 2px 4px;
+            margin-left: -4px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .project-title-input:hover {
+            border-color: var(--border-subtle);
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .project-title-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            background: var(--bg-input);
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-strong);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            transition: all 0.16s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            border-color: var(--cyan);
+            color: var(--text-main);
+            background: var(--bg-elevated);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-cyan {
+            background: var(--cyan-bg);
+            color: var(--cyan-light);
+            border-color: var(--cyan-border);
+        }
+        .btn-cyan:hover {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: var(--cyan);
+        }
+
+        .btn-cyan-solid {
+            background: var(--cyan);
+            color: #041019;
+            border-color: var(--cyan);
+            font-weight: 700;
+        }
+        .btn-cyan-solid:hover {
+            background: var(--cyan-light);
+            color: #041019;
+        }
+
+        .btn-amber {
+            background: var(--amber-bg);
+            color: var(--amber-light);
+            border-color: var(--amber-border);
+        }
+        .btn-amber:hover {
+            background: rgba(245, 158, 11, 0.24);
+            border-color: var(--amber);
+        }
+
+        .btn-amber-solid {
+            background: var(--amber);
+            color: #160e02;
+            border-color: var(--amber);
+            font-weight: 700;
+        }
+        .btn-amber-solid:hover {
+            background: var(--amber-light);
+            color: #160e02;
+        }
+
+        .btn-purple {
+            background: var(--purple-bg);
+            color: var(--purple-light);
+            border-color: var(--purple-border);
+        }
+        .btn-purple:hover {
+            background: rgba(168, 85, 247, 0.24);
+            border-color: var(--purple);
+        }
+
+        .btn-purple-solid {
+            background: var(--purple);
+            color: #140524;
+            border-color: var(--purple);
+            font-weight: 700;
+        }
+        .btn-purple-solid:hover {
+            background: var(--purple-light);
+            color: #140524;
+        }
+
+        .btn-rose {
+            background: var(--rose-bg);
+            color: var(--rose-light);
+            border-color: var(--rose-border);
+        }
+        .btn-rose:hover {
+            background: rgba(244, 63, 94, 0.24);
+            border-color: var(--rose);
+        }
+
+        .icon-btn {
+            padding: 5px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-surface);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .icon-btn:hover {
+            color: var(--cyan-light);
+            border-color: var(--cyan-border);
+            background: var(--bg-elevated);
+        }
+
+        .icon-btn.danger:hover {
+            color: var(--rose-light);
+            border-color: var(--rose-border);
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ================= SANDBOX BANNER ================= */
+        .sandbox-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border-radius: var(--radius-sm);
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--amber-border);
+            font-size: 12px;
+            color: #fde68a;
+        }
+        .sandbox-banner.visible {
+            display: flex;
+        }
+
+        /* ================= NAVIGATION TABS ================= */
+        .tabs-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 4px;
+            scrollbar-width: none;
+        }
+        .tabs-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--cyan-light);
+            border-bottom-color: var(--cyan);
+            background: linear-gradient(180deg, transparent, rgba(6, 182, 212, 0.08));
+        }
+
+        .tab-count {
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        /* ================= MAIN & SECTIONS ================= */
+        .main-content {
+            padding: 22px 0 48px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: var(--radius-lg);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .toolbar-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-input {
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            color: var(--text-main);
+            font-size: 12px;
+            min-width: 210px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+
+        /* ================= CARDS GRID ================= */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+            gap: 18px;
+        }
+
+        .hud-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .hud-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-index {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .card-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-tagline {
+            font-size: 12px;
+            color: var(--cyan-light);
+            margin-top: 4px;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .badge-cyan { background: var(--cyan-bg); color: var(--cyan-light); border-color: var(--cyan-border); }
+        .badge-amber { background: var(--amber-bg); color: var(--amber-light); border-color: var(--amber-border); }
+        .badge-rose { background: var(--rose-bg); color: var(--rose-light); border-color: var(--rose-border); }
+        .badge-purple { background: var(--purple-bg); color: var(--purple-light); border-color: var(--purple-border); }
+        .badge-emerald { background: var(--emerald-bg); color: var(--emerald-light); border-color: var(--emerald-border); }
+        .badge-blue { background: var(--blue-bg); color: var(--blue-light); border-color: var(--blue-border); }
+        .badge-slate { background: rgba(100, 116, 139, 0.16); color: var(--text-secondary); border-color: var(--border-strong); }
+
+        .color-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Info Boxes inside Cards */
+        .two-col-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px;
+        }
+
+        .info-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .info-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+            white-space: pre-line;
+        }
+
+        /* Character Arc Strip */
+        .arc-section {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+        }
+
+        .arc-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .arc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .arc-step {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--text-muted);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        .arc-step.mid { border-left-color: var(--amber); }
+        .arc-step.end { border-left-color: var(--emerald); }
+
+        .arc-step-title {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            color: var(--text-muted);
+        }
+        .arc-step.mid .arc-step-title { color: var(--amber-light); }
+        .arc-step.end .arc-step-title { color: var(--emerald-light); }
+
+        /* Faction accent border */
+        .faction-border-cyan { border-left: 4px solid var(--cyan); }
+        .faction-border-amber { border-left: 4px solid var(--amber); }
+        .faction-border-rose { border-left: 4px solid var(--rose); }
+        .faction-border-purple { border-left: 4px solid var(--purple); }
+        .faction-border-emerald { border-left: 4px solid var(--emerald); }
+        .faction-border-blue { border-left: 4px solid var(--blue); }
+
+        .members-strip {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ================= PLOT STAGES TIMELINE ================= */
+        .stages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .stage-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--purple);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stage-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .stage-num {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--purple-bg);
+            color: var(--purple-light);
+            border: 1px solid var(--purple-border);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .stage-meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .stage-summary {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg-surface);
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            white-space: pre-line;
+        }
+
+        /* ================= MATRIX TABLE ================= */
+        .matrix-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow-x: auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            border: 1px solid var(--border-subtle);
+            padding: 10px 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .matrix-table th {
+            background: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            min-width: 185px;
+        }
+
+        .matrix-table th.sticky-col,
+        .matrix-table td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            background: var(--bg-surface);
+            min-width: 190px;
+            max-width: 220px;
+            border-right: 2px solid var(--border-strong);
+        }
+
+        .matrix-table th.sticky-col {
+            z-index: 20;
+        }
+
+        .matrix-cell {
+            cursor: pointer;
+            min-height: 74px;
+            transition: background 0.15s;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .matrix-cell:hover {
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .matrix-cell.empty {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .matrix-cell.empty.highlight-gaps {
+            background: rgba(244, 63, 94, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(244, 63, 94, 0.35);
+        }
+
+        /* ================= CHEAT SHEET ================= */
+        .cheatsheet-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .cs-heading {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 12px;
+        }
+
+        /* ================= EMPTY STATE ================= */
+        .empty-state {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-strong);
+            border-radius: var(--radius-lg);
+            padding: 42px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ================= MODALS ================= */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(3, 6, 14, 0.82);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-dialog {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+        }
+
+        .modal-dialog.sm {
+            max-width: 460px;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-title {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 13px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            line-height: 1.45;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* ================= TOAST ================= */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 200;
+            background: var(--bg-elevated);
+            border: 1px solid var(--cyan);
+            color: var(--cyan-light);
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .header-top { padding: 10px 0 8px; }
+            .project-title-input { font-size: 14px; }
+            .btn { padding: 6px 9px; font-size: 10px; }
+            .hud-card { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= TOP HEADER ================= -->
+    <header class="app-header">
+        <div class="container">
+            <div class="header-top">
+                <div class="brand-box">
+                    <div class="brand-logo">LM</div>
+                    <div class="brand-info">
+                        <div class="brand-meta">
+                            <span class="sys-version">LORE.MATRIX // v1.2</span>
+                            <span id="storageBadge" class="status-pill">
+                                <span class="status-dot"></span>
+                                <span id="saveStatus">AUTO-SAVE</span>
+                            </span>
+                        </div>
+                        <input id="bookTitleInput" type="text" class="project-title-input" placeholder="Название книги или проекта..." value="Проект: Хроники Пепельного Сектора">
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button type="button" class="btn btn-cyan" onclick="openCharacterModal()">+ ГЕРОЙ</button>
+                    <button type="button" class="btn btn-amber" onclick="openFactionModal()">+ ФРАКЦИЯ</button>
+                    <button type="button" class="btn btn-purple" onclick="openStageModal()">+ ЭТАП</button>
+                    <button type="button" class="btn btn-amber" onclick="openStateCodeModal()" title="Текстовый код для переноса и сохранения в Google Сайтах">КОД СЕССИИ</button>
+                    <button type="button" class="btn" onclick="exportJSON()" title="Скачать файл JSON">JSON</button>
+                    <label class="btn" title="Загрузить проект из файла JSON">
+                        ИМПОРТ
+                        <input type="file" id="importJsonInput" accept=".json" style="display:none" onchange="importJSON(event)">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Warning banner for sandboxed iframes (Google Sites) -->
+            <div id="sandboxBanner" class="sandbox-banner">
+                <div>
+                    <strong style="font-family:var(--font-mono);color:var(--amber);">[SANDBOX // GOOGLE SITES]</strong>
+                    Встроенный фрейм ограничивает память браузера при обновлении страницы. Сохраняй прогресс через <strong>«КОД СЕССИИ»</strong> или <strong>«JSON»</strong>.
+                </div>
+                <button type="button" class="btn btn-amber" onclick="openStateCodeModal()">Получить код сессии</button>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <nav class="tabs-nav">
+                <button type="button" class="tab-btn active" id="tab-characters" onclick="switchTab('characters')">
+                    <span>01. ГЕРОИ</span>
+                    <span class="tab-count" id="badge-characters">0</span>
+                </button>
+                <button type="button" class="tab-btn" id="tab-factions" onclick="switchTab('factions')">
+                    <span>02. ФРАКЦИИ</span>
+                    <span class="tab-count" id="badge-factions">0</span>
+                </button>
+                <button type="button" class="tab-btn" id="tab-stages" onclick="switchTab('stages')">
+                    <span>03. СКЕЛЕТ СЮЖЕТА</span>
+                    <span class="tab-count" id="badge-stages">0</span>
+                </button>
+                <button type="button" class="tab-btn" id="tab-matrix" onclick="switchTab('matrix')">
+                    <span>04. МАТРИЦА АРОК</span>
+                </button>
+                <button type="button" class="tab-btn" id="tab-cheatsheet" onclick="switchTab('cheatsheet')">
+                    <span>05. ШПАРГАЛКА / ЭКСПОРТ</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ================= MAIN WORKSPACE ================= -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- TAB 1: CHARACTERS -->
+            <section id="view-characters" class="tab-panel active">
+                <div class="section-toolbar">
+                    <div>
+                        <h2 class="section-title"><span style="color:var(--cyan);font-family:var(--font-mono);">//</span> Досье персонажей и вектор трансформации</h2>
+                        <p class="section-desc">Характер, фракция, предыстория и дуга развития: кем герой был на старте (Точка А) и кем станет в финале (Точка Б).</p>
+                    </div>
+                    <div class="toolbar-controls">
+                        <input type="text" id="characterSearch" class="search-input" oninput="renderCharacters()" placeholder="Поиск по имени, роли, фракции...">
+                        <button type="button" class="btn btn-cyan-solid" onclick="openCharacterModal()">+ Добавить героя</button>
+                    </div>
+                </div>
+                <div id="charactersGrid" class="cards-grid"></div>
+            </section>
+
+            <!-- TAB 2: FACTIONS -->
+            <section id="view-factions" class="tab-panel">
+                <div class="section-toolbar">
+                    <div>
+                        <h2 class="section-title"><span style="color:var(--amber);font-family:var(--font-mono);">//</span> Фракции, ордены, корпорации и силы мира</h2>
+                        <p class="section-desc">Идеология, ресурсы, внутренние конфликты и дипломатия. Герои, привязанные к фракции, отображаются автоматически.</p>
+                    </div>
+                    <div class="toolbar-controls">
+                        <button type="button" class="btn btn-amber-solid" onclick="openFactionModal()">+ Новая фракция</button>
+                    </div>
+                </div>
+                <div id="factionsGrid" class="cards-grid"></div>
+            </section>
+
+            <!-- TAB 3: PLOT STAGES -->
+            <section id="view-stages" class="tab-panel">
+                <div class="section-toolbar">
+                    <div>
+                        <h2 class="section-title"><span style="color:var(--purple);font-family:var(--font-mono);">//</span> Свободный скелет повествования</h2>
+                        <p class="section-desc">Создавай сколько угодно вех истории, меняй их порядок кнопками ▲ / ▼ и отмечай участвующих персонажей.</p>
+                    </div>
+                    <div class="toolbar-controls">
+                        <button type="button" class="btn btn-purple-solid" onclick="openStageModal()">+ Добавить этап</button>
+                    </div>
+                </div>
+                <div id="stagesList" class="stages-list"></div>
+            </section>
+
+            <!-- TAB 4: MATRIX -->
+            <section id="view-matrix" class="tab-panel">
+                <div class="section-toolbar">
+                    <div>
+                        <h2 class="section-title"><span style="color:var(--cyan);font-family:var(--font-mono);">//</span> Матрица пересечений (Герой × Этап)</h2>
+                        <p class="section-desc">Кликни по любой ячейке, чтобы записать, что конкретно делает или переживает персонаж на данном этапе.</p>
+                    </div>
+                    <div class="toolbar-controls">
+                        <label style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);cursor:pointer;">
+                            <input type="checkbox" id="highlightGapsToggle" onchange="renderMatrix()">
+                            Подсветить пробелы в арках
+                        </label>
+                    </div>
+                </div>
+                <div id="matrixContainer"></div>
+            </section>
+
+            <!-- TAB 5: CHEAT SHEET & EXPORT -->
+            <section id="view-cheatsheet" class="tab-panel">
+                <div class="section-toolbar">
+                    <div>
+                        <h2 class="section-title"><span style="color:var(--emerald);font-family:var(--font-mono);">//</span> Сводная шпаргалка и резервное копирование</h2>
+                        <p class="section-desc">Единый конспект всей книги для печати или переноса в текстовый редактор.</p>
+                    </div>
+                    <div class="toolbar-controls">
+                        <button type="button" class="btn btn-cyan" onclick="copyMarkdown()">Копировать Markdown</button>
+                        <button type="button" class="btn btn-amber" onclick="openStateCodeModal()">Код сессии</button>
+                        <button type="button" class="btn" onclick="exportJSON()">Скачать JSON</button>
+                        <button type="button" class="btn btn-rose" onclick="openResetModal()">Сброс / Очистка</button>
+                    </div>
+                </div>
+                <div id="cheatSheetContent" class="cheatsheet-box"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ================= MODAL: CHARACTER ================= -->
+    <div id="characterModal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="charModalTitle" class="modal-title" style="color:var(--cyan-light);">Новый персонаж</h3>
+                <button type="button" class="icon-btn" onclick="closeModal('characterModal')">✕</button>
+            </div>
+            <form id="characterForm" class="form-grid" onsubmit="saveCharacter(event)">
+                <input type="hidden" id="charId">
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">ИМЯ ПЕРСОНАЖА *</label>
+                        <input type="text" id="charName" class="form-control" required placeholder="Напр.: Кайден Вэнс">
+                    </div>
+                    <div>
+                        <label class="form-label">РОЛЬ / АРХЕТИП</label>
+                        <select id="charRole" class="form-control">
+                            <option value="Протагонист">Протагонист</option>
+                            <option value="Антагонист">Антагонист</option>
+                            <option value="Союзник">Союзник</option>
+                            <option value="Ментор">Ментор</option>
+                            <option value="Трикстер">Трикстер</option>
+                            <option value="Второстепенный">Второстепенный</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">КРАТКИЙ ТЕГЛАЙН</label>
+                        <input type="text" id="charTagline" class="form-control" placeholder="Суть героя в одной фразе...">
+                    </div>
+                    <div>
+                        <label class="form-label" style="color:var(--amber-light);">ФРАКЦИЯ / ПРИНАДЛЕЖНОСТЬ</label>
+                        <select id="charFaction" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">ХАРАКТЕР И ПРИВЫЧКИ</label>
+                        <textarea id="charPersonality" class="form-control" rows="3" placeholder="Сильные стороны, страхи, манера речи..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label">ПРЕДЫСТОРИЯ (ОТКУДА ПРИШЁЛ)</label>
+                        <textarea id="charBackstory" class="form-control" rows="3" placeholder="Прошлое, ключевая травма или мотивация..."></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" style="color:var(--cyan-light);">ВЕКТОР ТРАНСФОРМАЦИИ (АРКА ГЕРОЯ)</label>
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">ТОЧКА А (СТАРТ)</label>
+                            <textarea id="charStart" class="form-control" rows="2" placeholder="Кем является в начале..."></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label" style="color:var(--amber-light);">ПЕРЕЛОМНЫЙ МОМЕНТ</label>
+                            <textarea id="charMid" class="form-control" rows="2" placeholder="Что ломает прежние убеждения..."></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label" style="color:var(--emerald-light);">ТОЧКА Б (ИТОГ)</label>
+                            <textarea id="charEnd" class="form-control" rows="2" placeholder="Кем становится в финале..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('characterModal')">Отмена</button>
+                    <button type="submit" class="btn btn-cyan-solid">Сохранить героя</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: FACTION ================= -->
+    <div id="factionModal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="factionModalTitle" class="modal-title" style="color:var(--amber-light);">Новая фракция</h3>
+                <button type="button" class="icon-btn" onclick="closeModal('factionModal')">✕</button>
+            </div>
+            <form id="factionForm" class="form-grid" onsubmit="saveFaction(event)">
+                <input type="hidden" id="factionId">
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">НАЗВАНИЕ ФРАКЦИИ *</label>
+                        <input type="text" id="factionName" class="form-control" required placeholder="Напр.: Корпорация «Гелиос»">
+                    </div>
+                    <div>
+                        <label class="form-label">ТИП / СТРУКТУРА</label>
+                        <input type="text" id="factionType" class="form-control" placeholder="Корпорация / Орден / Синдикат">
+                    </div>
+                    <div>
+                        <label class="form-label">ЦВЕТОВОЙ МАРКЕР</label>
+                        <select id="factionColor" class="form-control">
+                            <option value="cyan">Циан (Голубой)</option>
+                            <option value="amber" selected>Янтарь (Золотой)</option>
+                            <option value="rose">Алый (Красный)</option>
+                            <option value="purple">Фиолетовый</option>
+                            <option value="emerald">Изумрудный</option>
+                            <option value="blue">Синий</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">ИДЕОЛОГИЯ И ГЛАВНАЯ ЦЕЛЬ</label>
+                    <textarea id="factionIdeology" class="form-control" rows="2" placeholder="Во что верят и чего добиваются..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">РЕСУРСЫ И ВЛИЯНИЕ</label>
+                        <textarea id="factionResources" class="form-control" rows="3" placeholder="Флот, технологии, финансы, тайные знания..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label">ВНУТРЕННИЕ КОНФЛИКТЫ И СЛАБОСТИ</label>
+                        <textarea id="factionWeakness" class="form-control" rows="3" placeholder="Раскол в руководстве, уязвимость, дефицит..."></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">ОТНОШЕНИЯ С ДРУГИМИ СИЛАМИ</label>
+                    <input type="text" id="factionRelations" class="form-control" placeholder="Союзники, враги, холодная война...">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('factionModal')">Отмена</button>
+                    <button type="submit" class="btn btn-amber-solid">Сохранить фракцию</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: STAGE ================= -->
+    <div id="stageModal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="stageModalTitle" class="modal-title" style="color:var(--purple-light);">Новый этап сюжета</h3>
+                <button type="button" class="icon-btn" onclick="closeModal('stageModal')">✕</button>
+            </div>
+            <form id="stageForm" class="form-grid" onsubmit="saveStage(event)">
+                <input type="hidden" id="stageId">
+                <div>
+                    <label class="form-label">НАЗВАНИЕ ЭТАПА / ВЕХИ *</label>
+                    <input type="text" id="stageTitle" class="form-control" required placeholder="Напр.: Сигнал из мёртвого сектора">
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label class="form-label">ЛОКАЦИЯ / АТМОСФЕРА</label>
+                        <input type="text" id="stageLocation" class="form-control" placeholder="Станция «Аврора-9», док 4">
+                    </div>
+                    <div>
+                        <label class="form-label">СТАВКИ / ЦЕЛЬ ЭТАПА</label>
+                        <input type="text" id="stageStakes" class="form-control" placeholder="Успеть расшифровать чёрный ящик до облавы">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">ЧТО ПРОИСХОДИТ (КРАТКИЙ СИНОПСИС)</label>
+                    <textarea id="stageSummary" class="form-control" rows="4" placeholder="Ключевые события, повороты и чем заканчивается этот этап..."></textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">УЧАСТВУЮЩИЕ ГЕРОИ</label>
+                    <div id="stageCharactersCheckboxes" style="display:flex;flex-wrap:wrap;gap:8px;padding:8px;background:var(--bg-input);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('stageModal')">Отмена</button>
+                    <button type="submit" class="btn btn-purple-solid">Сохранить этап</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: MATRIX CELL ================= -->
+    <div id="matrixModal" class="modal-backdrop">
+        <div class="modal-dialog sm">
+            <div class="modal-header">
+                <div>
+                    <div id="matrixCellContext" style="font-family:var(--font-mono);font-size:10px;color:var(--cyan);"></div>
+                    <h3 class="modal-title" style="color:var(--text-main);">Действие персонажа на этапе</h3>
+                </div>
+                <button type="button" class="icon-btn" onclick="closeModal('matrixModal')">✕</button>
+            </div>
+            <form id="matrixForm" class="form-grid" onsubmit="saveMatrixCell(event)">
+                <input type="hidden" id="matrixCharId">
+                <input type="hidden" id="matrixStageId">
+                <div>
+                    <label class="form-label">ЧТО ДЕЛАЕТ / ЧТО МЕНЯЕТСЯ В ГЕРОЕ</label>
+                    <textarea id="matrixCellInput" class="form-control" rows="4" placeholder="Опиши шаг героя на этой вехе сюжета (оставь пустым, чтобы очистить)..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('matrixModal')">Отмена</button>
+                    <button type="submit" class="btn btn-cyan-solid">Записать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: SESSION CODE (GOOGLE SITES SAFE) ================= -->
+    <div id="stateCodeModal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div>
+                    <div style="font-family:var(--font-mono);font-size:10px;color:var(--amber);">SANDBOX-ПЕРЕНОС // БЕЗ СКАЧИВАНИЯ ФАЙЛОВ</div>
+                    <h3 class="modal-title" style="color:var(--text-main);">Код состояния сессии</h3>
+                </div>
+                <button type="button" class="icon-btn" onclick="closeModal('stateCodeModal')">✕</button>
+            </div>
+            <div class="form-grid">
+                <p style="font-size:12px;color:var(--text-secondary);">
+                    Если Google Сайты сбрасывают данные после обновления страницы, скопируй этот код в заметки перед закрытием вкладки — а при следующем визите вставь его сюда и нажми <strong>«Загрузить из кода»</strong>.
+                </p>
+                <textarea id="stateCodeTextarea" class="form-control" rows="5" style="font-family:var(--font-mono);font-size:11px;color:var(--cyan-light);" placeholder="Вставь сюда ранее сохранённый код..."></textarea>
+                <div class="modal-footer" style="justify-content:space-between;">
+                    <button type="button" class="btn btn-amber-solid" onclick="copyStateCode()">Скопировать текущий код</button>
+                    <div style="display:flex;gap:8px;">
+                        <button type="button" class="btn btn-cyan" onclick="loadFromStateCode()">Загрузить из кода</button>
+                        <button type="button" class="btn" onclick="closeModal('stateCodeModal')">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: RESET / CLEAR ================= -->
+    <div id="resetModal" class="modal-backdrop">
+        <div class="modal-dialog sm">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color:var(--rose-light);">Управление данными проекта</h3>
+                <button type="button" class="icon-btn" onclick="closeModal('resetModal')">✕</button>
+            </div>
+            <div class="form-grid">
+                <p style="font-size:12px;color:var(--text-secondary);">
+                    Выбери действие: начать свою книгу с абсолютно чистого листа или вернуть демонстрационный шаблон.
+                </p>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button type="button" class="btn btn-rose" style="justify-content:flex-start;padding:10px 12px;" onclick="clearAllData()">
+                        Очистить всё (начать новую книгу с нуля)
+                    </button>
+                    <button type="button" class="btn btn-cyan" style="justify-content:flex-start;padding:10px 12px;" onclick="restoreDemoData()">
+                        Восстановить демо-шаблон («Хроники Пепельного Сектора»)
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="closeModal('resetModal')">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Готово</div>
+
+    <script>
+        const STORAGE_KEY = 'lore_matrix_state_v1';
+
+        const DEMO_STATE = {
+            bookTitle: 'Проект: Хроники Пепельного Сектора',
+            factions: [
+                {
+                    id: 'f1',
+                    name: 'Корпорация «Гелиос»',
+                    type: 'Технократическая корпорация',
+                    color: 'rose',
+                    ideology: 'Спасение человечества через полный контроль и оцифровку сознания в единой нейросети «Элизиум».',
+                    resources: 'Тяжёлые крейсеры, орбитальные верфи, монополия на квантовую связь и синтез топлива.',
+                    weakness: 'Абсолютная зависимость от центральных серверов и тайный раскол между советом директоров и Архонтом.',
+                    relations: 'Охотятся за технологиями Предтеч; считают Гильдию Навигаторов опасными анархистами.'
+                },
+                {
+                    id: 'f2',
+                    name: 'Гильдия Вольных Навигаторов',
+                    type: 'Братство пилотов и исследователей',
+                    color: 'cyan',
+                    ideology: 'Свобода фронтира и право каждого человека самостоятельно выбирать свою судьбу без цифрового ошейника.',
+                    resources: 'Секретные звёздные карты, модифицированные разведчики, сеть тайных баз в астероидных поясах.',
+                    weakness: 'Разрозненность кланов, нехватка тяжёлого вооружения и устаревший флот.',
+                    relations: 'Ведут партизанскую войну против «Гелиоса»; сотрудничают с независимыми учёными.'
+                }
+            ],
+            characters: [
+                {
+                    id: 'c1',
+                    name: 'Кайден Вэнс',
+                    role: 'Протагонист',
+                    factionId: 'f2',
+                    tagline: 'Опальный картограф-навигатор, ищущий пропавшую экспедицию брата',
+                    personality: 'Наблюдательный, упрямый, скрывает тревогу за сухим сарказмом. Привык полагаться только на расчёты.',
+                    backstory: 'После провала прыжка в секторе «Пепел» был списан на берег. Единственный, кто выжил после контакта с аномалией.',
+                    arcStart: 'Циничный одиночка, бегущий от чувства вины.',
+                    arcMid: 'Понимает, что брат не жертва, а архитектор аномалии.',
+                    arcEnd: 'Принимает лидерство и решается закрыть разлом ценой своих воспоминаний.'
+                },
+                {
+                    id: 'c2',
+                    name: 'Доктор Лира Сорен',
+                    role: 'Союзник',
+                    factionId: '',
+                    tagline: 'Ксенолингвист, способная расшифровать «песнь» древних маяков',
+                    personality: 'Эмпатичная, любознательная до безрассудства, но в критический момент действует хладнокровно.',
+                    backstory: 'Выросла на исследовательском ковчеге. Потеряла финансирование из-за «антинаучных» теорий о живом космосе.',
+                    arcStart: 'Идеалистка, ищущая лишь научное признание.',
+                    arcMid: 'Сталкивается с тем, что её знания можно использовать как оружие.',
+                    arcEnd: 'Становится хранителем нового договора между людьми и ИИ сектора.'
+                },
+                {
+                    id: 'c3',
+                    name: 'Архонт Малакор',
+                    role: 'Антагонист',
+                    factionId: 'f1',
+                    tagline: 'Директор корпорации «Гелиос», желающий оцифровать сознание колоний',
+                    personality: 'Харизматичный визионер с железной логикой утилитаризма. Не считает себя злодеем.',
+                    backstory: 'Пережил гибель родной планеты и поклялся спасти человечество, даже если придётся лишить его свободы воли.',
+                    arcStart: 'Уверенный в своей правоте спаситель человечества.',
+                    arcMid: 'Теряет контроль над собственной нейросетью.',
+                    arcEnd: 'Осознаёт тщетность абсолютного контроля перед крахом цитадели.'
+                }
+            ],
+            stages: [
+                {
+                    id: 's1',
+                    title: 'Пепельный сигнал',
+                    location: 'Орбитальная станция «Ржавый Якорь»',
+                    stakes: 'Расшифровать маяк до прибытия чистильщиков «Гелиоса»',
+                    summary: 'Кайден получает обрывок координат с корабля пропавшего брата и нанимает Лиру для перевода сигнатуры.',
+                    characterIds: ['c1', 'c2']
+                },
+                {
+                    id: 's2',
+                    title: 'Ловушка в поясе обломков',
+                    location: 'Кладбище дредноутов, Сектор 4',
+                    stakes: 'Выжить в засаде и сохранить навигационный ключ',
+                    summary: 'Флот «Гелиоса» перехватывает разведчик героев. Кайден впервые сталкивается с цифровой проекцией Малакора.',
+                    characterIds: ['c1', 'c2', 'c3']
+                },
+                {
+                    id: 's3',
+                    title: 'Сердце Аномалии',
+                    location: 'Цитадель Предтеч',
+                    stakes: 'Судьба сознаний всех жителей фронтира',
+                    summary: 'Финальный штурм ядра. Лира взламывает протокол сдерживания, а Кайден делает выбор между спасением брата и закрытием разлома.',
+                    characterIds: ['c1', 'c2', 'c3']
+                }
+            ],
+            matrix: {
+                'c1_s1': 'Соглашается вернуться в космос ради следа брата; не доверяет Лире.',
+                'c2_s1': 'Расшифровывает первую часть координат и убеждает Кайдена лететь.',
+                'c1_s2': 'Проводит корабль через минное поле, жертвуя маскировкой.',
+                'c3_s2': 'Предлагает Кайдену сделку: координаты брата в обмен на ключ.',
+                'c1_s3': 'Закрывает разлом, отпуская прошлое.',
+                'c2_s3': 'Переписывает код маяка, спасая колонистов от оцифровки.',
+                'c3_s3': 'Терпит крах, когда его собственная сеть отвергает диктат.'
+            }
+        };
+
+        let storageAvailable = false;
+        let state = loadState();
+        let activeTab = 'characters';
+
+        function detectStorageSupport() {
+            try {
+                const probe = '__lore_matrix_test__';
+                window.localStorage.setItem(probe, '1');
+                const ok = window.localStorage.getItem(probe) === '1';
+                window.localStorage.removeItem(probe);
+                let isFramed = false;
+                try {
+                    isFramed = window.self !== window.top;
+                } catch (err) {
+                    isFramed = true;
+                }
+                return ok && !isFramed;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function updateStorageIndicator() {
+            storageAvailable = detectStorageSupport();
+            const badge = document.getElementById('storageBadge');
+            const status = document.getElementById('saveStatus');
+            const banner = document.getElementById('sandboxBanner');
+
+            if (storageAvailable) {
+                badge.classList.remove('sandbox');
+                status.textContent = 'AUTO-SAVE';
+                banner.classList.remove('visible');
+            } else {
+                badge.classList.add('sandbox');
+                status.textContent = 'SANDBOX MODE';
+                banner.classList.add('visible');
+            }
+        }
+
+        function normalizeState(raw) {
+            return {
+                bookTitle: raw.bookTitle || 'Новая книга',
+                factions: Array.isArray(raw.factions) ? raw.factions : [],
+                characters: Array.isArray(raw.characters) ? raw.characters : [],
+                stages: Array.isArray(raw.stages) ? raw.stages : [],
+                matrix: raw.matrix && typeof raw.matrix === 'object' ? raw.matrix : {}
+            };
+        }
+
+        function loadState() {
+            try {
+                if (window.location.hash && window.location.hash.startsWith('#lore=')) {
+                    const encoded = window.location.hash.slice(6);
+                    const jsonStr = decodeURIComponent(escape(atob(encoded)));
+                    const parsed = JSON.parse(jsonStr);
+                    if (parsed && Array.isArray(parsed.characters)) {
+                        return normalizeState(parsed);
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                const raw = window.localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && Array.isArray(parsed.characters) && Array.isArray(parsed.stages)) {
+                        return normalizeState(parsed);
+                    }
+                }
+            } catch (e) {}
+
+            return normalizeState(JSON.parse(JSON.stringify(DEMO_STATE)));
+        }
+
+        function persistState() {
+            try {
+                window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                if (storageAvailable) {
+                    const status = document.getElementById('saveStatus');
+                    status.textContent = 'СОХРАНЕНО';
+                    setTimeout(() => {
+                        status.textContent = 'AUTO-SAVE';
+                    }, 1400);
+                }
+            } catch (e) {}
+            updateBadges();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function updateBadges() {
+            document.getElementById('badge-characters').textContent = state.characters.length;
+            document.getElementById('badge-factions').textContent = state.factions.length;
+            document.getElementById('badge-stages').textContent = state.stages.length;
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        function getRoleBadgeClass(role) {
+            const map = {
+                'Протагонист': 'badge-cyan',
+                'Антагонист': 'badge-rose',
+                'Союзник': 'badge-emerald',
+                'Ментор': 'badge-purple',
+                'Трикстер': 'badge-amber',
+                'Второстепенный': 'badge-slate'
+            };
+            return map[role] || 'badge-slate';
+        }
+
+        function getFactionBadgeClass(color) {
+            const allowed = ['cyan', 'amber', 'rose', 'purple', 'emerald', 'blue'];
+            return allowed.includes(color) ? `badge-${color}` : 'badge-amber';
+        }
+
+        function getFactionById(id) {
+            if (!id) return null;
+            return state.factions.find(f => f.id === id) || null;
+        }
+
+        document.getElementById('bookTitleInput').addEventListener('input', (e) => {
+            state.bookTitle = e.target.value;
+            persistState();
+            if (activeTab === 'cheatsheet') renderCheatSheet();
+        });
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`view-${tabName}`).classList.add('active');
+
+            renderCurrentView();
+        }
+
+        function renderCurrentView() {
+            if (activeTab === 'characters') renderCharacters();
+            if (activeTab === 'factions') renderFactions();
+            if (activeTab === 'stages') renderStages();
+            if (activeTab === 'matrix') renderMatrix();
+            if (activeTab === 'cheatsheet') renderCheatSheet();
+        }
+
+        /* ================= RENDER CHARACTERS ================= */
+        function renderCharacters() {
+            const grid = document.getElementById('charactersGrid');
+            const query = (document.getElementById('characterSearch').value || '').toLowerCase();
+
+            const filtered = state.characters.filter(c => {
+                const faction = getFactionById(c.factionId);
+                const fName = faction ? faction.name.toLowerCase() : '';
+                return c.name.toLowerCase().includes(query) ||
+                    c.role.toLowerCase().includes(query) ||
+                    fName.includes(query) ||
+                    (c.tagline && c.tagline.toLowerCase().includes(query));
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div style="font-family:var(--font-mono);color:var(--text-muted);">ДОСЬЕ ПЕРСОНАЖЕЙ НЕ НАЙДЕНЫ</div>
+                        <button type="button" class="btn btn-cyan" onclick="openCharacterModal()">+ Создать первого героя</button>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map((char, idx) => {
+                const faction = getFactionById(char.factionId);
+                return `
+                <article class="hud-card">
+                    <div>
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title-row">
+                                    <span class="card-index">#0${idx + 1}</span>
+                                    <h3 class="card-name">${escapeHTML(char.name)}</h3>
+                                    <span class="badge ${getRoleBadgeClass(char.role)}">${escapeHTML(char.role)}</span>
+                                    ${faction ? `
+                                        <button type="button" class="badge ${getFactionBadgeClass(faction.color)}" style="cursor:pointer;" onclick="switchTab('factions')" title="Перейти ко вкладке фракций">
+                                            <span class="color-dot"></span>
+                                            <span>${escapeHTML(faction.name)}</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                ${char.tagline ? `<p class="card-tagline">${escapeHTML(char.tagline)}</p>` : ''}
+                            </div>
+                            <div class="card-actions">
+                                <button type="button" class="icon-btn" onclick="openCharacterModal('${char.id}')" title="Редактировать">✎</button>
+                                <button type="button" class="icon-btn danger" onclick="deleteCharacter('${char.id}')" title="Удалить">✕</button>
+                            </div>
+                        </div>
+
+                        <div class="two-col-info" style="margin-top:12px;">
+                            <div class="info-box">
+                                <span class="info-label">Характер</span>
+                                <div class="info-text">${escapeHTML(char.personality) || '<span style="color:var(--text-muted);font-style:italic;">Не указано</span>'}</div>
+                            </div>
+                            <div class="info-box">
+                                <span class="info-label">Предыстория</span>
+                                <div class="info-text">${escapeHTML(char.backstory) || '<span style="color:var(--text-muted);font-style:italic;">Не указано</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="arc-section">
+                        <div class="arc-header">
+                            <span>ВЕКТОР ТРАНСФОРМАЦИИ</span>
+                            <span style="color:var(--cyan);">А → ПЕРЕЛОМ → Б</span>
+                        </div>
+                        <div class="arc-grid">
+                            <div class="arc-step">
+                                <span class="arc-step-title">СТАРТ (А)</span>
+                                <div class="info-text">${escapeHTML(char.arcStart) || '—'}</div>
+                            </div>
+                            <div class="arc-step mid">
+                                <span class="arc-step-title">ПЕРЕЛОМ</span>
+                                <div class="info-text">${escapeHTML(char.arcMid) || '—'}</div>
+                            </div>
+                            <div class="arc-step end">
+                                <span class="arc-step-title">ИТОГ (Б)</span>
+                                <div class="info-text">${escapeHTML(char.arcEnd) || '—'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
+        /* ================= RENDER FACTIONS ================= */
+        function renderFactions() {
+            const grid = document.getElementById('factionsGrid');
+
+            if (state.factions.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div style="font-family:var(--font-mono);color:var(--text-muted);">ФРАКЦИИ ПОКА НЕ СОЗДАНЫ</div>
+                        <button type="button" class="btn btn-amber" onclick="openFactionModal()">+ Создать первую фракцию</button>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = state.factions.map((fac, idx) => {
+                const members = state.characters.filter(c => c.factionId === fac.id);
+                const borderClass = `faction-border-${fac.color || 'amber'}`;
+                return `
+                <article class="hud-card ${borderClass}">
+                    <div>
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title-row">
+                                    <span class="card-index">F-0${idx + 1}</span>
+                                    <h3 class="card-name">${escapeHTML(fac.name)}</h3>
+                                    ${fac.type ? `<span class="badge ${getFactionBadgeClass(fac.color)}">${escapeHTML(fac.type)}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button type="button" class="icon-btn" onclick="openFactionModal('${fac.id}')" title="Редактировать">✎</button>
+                                <button type="button" class="icon-btn danger" onclick="deleteFaction('${fac.id}')" title="Удалить">✕</button>
+                            </div>
+                        </div>
+
+                        ${fac.ideology ? `
+                            <div class="info-box" style="margin-top:12px;">
+                                <span class="info-label" style="color:var(--amber-light);">Идеология и цель</span>
+                                <div class="info-text">${escapeHTML(fac.ideology)}</div>
+                            </div>
+                        ` : ''}
+
+                        <div class="two-col-info" style="margin-top:10px;">
+                            <div class="info-box">
+                                <span class="info-label" style="color:var(--cyan-light);">Ресурсы и влияние</span>
+                                <div class="info-text">${escapeHTML(fac.resources) || '<span style="color:var(--text-muted);font-style:italic;">Не указано</span>'}</div>
+                            </div>
+                            <div class="info-box">
+                                <span class="info-label" style="color:var(--rose-light);">Конфликты и слабости</span>
+                                <div class="info-text">${escapeHTML(fac.weakness) || '<span style="color:var(--text-muted);font-style:italic;">Не указано</span>'}</div>
+                            </div>
+                        </div>
+
+                        ${fac.relations ? `
+                            <div class="info-box" style="margin-top:10px;">
+                                <span class="info-label">Дипломатия</span>
+                                <div class="info-text">${escapeHTML(fac.relations)}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="members-strip">
+                        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Участники:</span>
+                        ${members.length > 0 ? members.map(m => `
+                            <button type="button" class="badge badge-slate" style="cursor:pointer;" onclick="openCharacterModal('${m.id}')">${escapeHTML(m.name)}</button>
+                        `).join('') : '<span style="font-size:11px;color:var(--text-muted);font-style:italic;">нет привязанных героев</span>'}
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
+        /* ================= RENDER STAGES ================= */
+        function renderStages() {
+            const list = document.getElementById('stagesList');
+
+            if (state.stages.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-family:var(--font-mono);color:var(--text-muted);">СКЕЛЕТ СЮЖЕТА ПУСТ</div>
+                        <button type="button" class="btn btn-purple" onclick="openStageModal()">+ Добавить первый этап истории</button>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = state.stages.map((stage, idx) => {
+                const chars = (stage.characterIds || [])
+                    .map(cid => state.characters.find(c => c.id === cid))
+                    .filter(Boolean);
+
+                return `
+                <article class="stage-card">
+                    <div class="stage-top">
+                        <div>
+                            <div class="card-title-row">
+                                <span class="stage-num">ЭТАП ${idx + 1}</span>
+                                <h3 class="card-name">${escapeHTML(stage.title)}</h3>
+                            </div>
+                            <div class="stage-meta-tags">
+                                ${stage.location ? `<span class="badge badge-slate">Локация: ${escapeHTML(stage.location)}</span>` : ''}
+                                ${stage.stakes ? `<span class="badge badge-amber">Ставки: ${escapeHTML(stage.stakes)}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button type="button" class="icon-btn" onclick="moveStage(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Поднять выше">▲</button>
+                            <button type="button" class="icon-btn" onclick="moveStage(${idx}, 1)" ${idx === state.stages.length - 1 ? 'disabled' : ''} title="Опустить ниже">▼</button>
+                            <button type="button" class="icon-btn" onclick="openStageModal('${stage.id}')" title="Редактировать">✎</button>
+                            <button type="button" class="icon-btn danger" onclick="deleteStage('${stage.id}')" title="Удалить">✕</button>
+                        </div>
+                    </div>
+
+                    ${stage.summary ? `<div class="stage-summary">${escapeHTML(stage.summary)}</div>` : ''}
+
+                    <div class="members-strip" style="border-top:none;padding-top:0;">
+                        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Герои на этапе:</span>
+                        ${chars.length > 0 ? chars.map(c => `<span class="badge badge-cyan">${escapeHTML(c.name)}</span>`).join('') : '<span style="font-size:11px;color:var(--text-muted);font-style:italic;">не выбраны</span>'}
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
+        /* ================= RENDER MATRIX ================= */
+        function renderMatrix() {
+            const container = document.getElementById('matrixContainer');
+            const highlightGaps = document.getElementById('highlightGapsToggle').checked;
+
+            if (state.characters.length === 0 || state.stages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-family:var(--font-mono);color:var(--text-muted);">ДЛЯ МАТРИЦЫ НУЖЕН ХОТЯ БЫ 1 ГЕРОЙ И 1 ЭТАП СЮЖЕТА</div>
+                    </div>`;
+                return;
+            }
+
+            const headerCols = state.stages.map((s, idx) => `
+                <th>
+                    <div style="color:var(--purple-light);font-size:10px;">ЭТАП ${idx + 1}</div>
+                    <div style="color:var(--text-main);font-size:12px;margin-top:2px;">${escapeHTML(s.title)}</div>
+                </th>
+            `).join('');
+
+            const rows = state.characters.map(c => {
+                const faction = getFactionById(c.factionId);
+                const cells = state.stages.map(s => {
+                    const key = `${c.id}_${s.id}`;
+                    const note = state.matrix[key] || '';
+                    const isEmpty = !note.trim();
+                    return `
+                        <td class="matrix-cell ${isEmpty ? 'empty' : ''} ${isEmpty && highlightGaps ? 'highlight-gaps' : ''}" onclick="openMatrixModal('${c.id}', '${s.id}')">
+                            ${isEmpty ? '+ Добавить заметку' : escapeHTML(note)}
+                        </td>
+                    `;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td class="sticky-col">
+                            <div style="font-weight:700;color:var(--text-main);font-size:13px;">${escapeHTML(c.name)}</div>
+                            <div style="font-family:var(--font-mono);font-size:10px;color:var(--cyan);margin-top:2px;">${escapeHTML(c.role)}</div>
+                            ${faction ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--amber-light);margin-top:2px;">• ${escapeHTML(faction.name)}</div>` : ''}
+                        </td>
+                        ${cells}
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="matrix-wrapper">
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th class="sticky-col">ГЕРОЙ / ЭТАП</th>
+                                ${headerCols}
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        /* ================= RENDER CHEAT SHEET ================= */
+        function renderCheatSheet() {
+            const container = document.getElementById('cheatSheetContent');
+
+            const charsHTML = state.characters.map((c, i) => {
+                const faction = getFactionById(c.factionId);
+                return `
+                <div class="info-box">
+                    <div style="font-weight:700;font-size:13px;color:var(--text-main);">
+                        ${i + 1}. ${escapeHTML(c.name)}
+                        <span style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);">[${escapeHTML(c.role)}]</span>
+                        ${faction ? `<span style="font-family:var(--font-mono);font-size:11px;color:var(--amber-light);">• ${escapeHTML(faction.name)}</span>` : ''}
+                    </div>
+                    ${c.tagline ? `<div style="font-size:12px;color:var(--text-muted);font-style:italic;margin-top:2px;">${escapeHTML(c.tagline)}</div>` : ''}
+                    ${c.personality ? `<div style="margin-top:6px;"><strong>Характер:</strong> ${escapeHTML(c.personality)}</div>` : ''}
+                    ${c.backstory ? `<div style="margin-top:4px;"><strong>Бэкграунд:</strong> ${escapeHTML(c.backstory)}</div>` : ''}
+                    <div style="margin-top:6px;font-family:var(--font-mono);font-size:11px;color:var(--cyan-light);">
+                        Арка: [${escapeHTML(c.arcStart || '?')}] ➔ [${escapeHTML(c.arcMid || '?')}] ➔ [${escapeHTML(c.arcEnd || '?')}]
+                    </div>
+                </div>`;
+            }).join('');
+
+            const factionsHTML = state.factions.map((f, i) => {
+                const members = state.characters.filter(c => c.factionId === f.id).map(c => c.name);
+                return `
+                <div class="info-box">
+                    <div style="font-weight:700;font-size:13px;color:var(--text-main);">
+                        ${i + 1}. ${escapeHTML(f.name)}
+                        ${f.type ? `<span style="font-family:var(--font-mono);font-size:11px;color:var(--amber-light);">[${escapeHTML(f.type)}]</span>` : ''}
+                    </div>
+                    ${f.ideology ? `<div style="margin-top:5px;"><strong>Цель:</strong> ${escapeHTML(f.ideology)}</div>` : ''}
+                    ${f.resources ? `<div style="margin-top:4px;"><strong>Ресурсы:</strong> ${escapeHTML(f.resources)}</div>` : ''}
+                    ${f.weakness ? `<div style="margin-top:4px;"><strong>Уязвимости:</strong> ${escapeHTML(f.weakness)}</div>` : ''}
+                    ${members.length ? `<div style="margin-top:5px;font-family:var(--font-mono);font-size:11px;color:var(--cyan-light);">Представители: ${escapeHTML(members.join(', '))}</div>` : ''}
+                </div>`;
+            }).join('');
+
+            const stagesHTML = state.stages.map((s, idx) => {
+                const notes = state.characters
+                    .map(c => ({ name: c.name, text: state.matrix[`${c.id}_${s.id}`] }))
+                    .filter(item => item.text && item.text.trim());
+
+                return `
+                <div class="info-box">
+                    <div style="font-weight:700;font-size:13px;color:var(--text-main);">
+                        Этап ${idx + 1}: ${escapeHTML(s.title)}
+                        ${s.location ? `<span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">(${escapeHTML(s.location)})</span>` : ''}
+                    </div>
+                    ${s.stakes ? `<div style="font-size:12px;color:var(--amber-light);margin-top:3px;">Ставки: ${escapeHTML(s.stakes)}</div>` : ''}
+                    ${s.summary ? `<div style="margin-top:5px;">${escapeHTML(s.summary)}</div>` : ''}
+                    ${notes.length ? `
+                        <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border-subtle);font-size:12px;">
+                            ${notes.map(n => `<div><span style="color:var(--cyan-light);font-weight:600;">${escapeHTML(n.name)}:</span> ${escapeHTML(n.text)}</div>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div>
+                    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">СВОДНЫЙ ДОКУМЕНТ ПРОЕКТА</div>
+                    <h2 style="font-size:20px;font-weight:800;color:var(--text-main);margin-top:2px;">${escapeHTML(state.bookTitle || 'Без названия')}</h2>
+                </div>
+
+                <div>
+                    <h3 class="cs-heading" style="color:var(--cyan-light);">I. Персонажи и их арки (${state.characters.length})</h3>
+                    <div class="two-col-info">${charsHTML || '<p style="color:var(--text-muted);">Нет персонажей</p>'}</div>
+                </div>
+
+                <div>
+                    <h3 class="cs-heading" style="color:var(--amber-light);">II. Фракции и организации (${state.factions.length})</h3>
+                    <div class="two-col-info">${factionsHTML || '<p style="color:var(--text-muted);">Нет фракций</p>'}</div>
+                </div>
+
+                <div>
+                    <h3 class="cs-heading" style="color:var(--purple-light);">III. Поэтапный скелет книги (${state.stages.length})</h3>
+                    <div style="display:flex;flex-direction:column;gap:10px;">${stagesHTML || '<p style="color:var(--text-muted);">Нет этапов</p>'}</div>
+                </div>
+            `;
+        }
+
+        /* ================= MODALS & CRUD ================= */
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        function populateFactionSelect(selectedId = '') {
+            const select = document.getElementById('charFaction');
+            select.innerHTML = `<option value="">— Без фракции / Одиночка —</option>` +
+                state.factions.map(f => `<option value="${f.id}" ${f.id === selectedId ? 'selected' : ''}>${escapeHTML(f.name)}</option>`).join('');
+        }
+
+        function openCharacterModal(id = null) {
+            const form = document.getElementById('characterForm');
+            form.reset();
+            document.getElementById('charId').value = id || '';
+
+            if (id) {
+                const c = state.characters.find(item => item.id === id);
+                if (!c) return;
+                document.getElementById('charModalTitle').textContent = 'Редактировать персонажа';
+                document.getElementById('charName').value = c.name;
+                document.getElementById('charRole').value = c.role;
+                populateFactionSelect(c.factionId || '');
+                document.getElementById('charTagline').value = c.tagline || '';
+                document.getElementById('charPersonality').value = c.personality || '';
+                document.getElementById('charBackstory').value = c.backstory || '';
+                document.getElementById('charStart').value = c.arcStart || '';
+                document.getElementById('charMid').value = c.arcMid || '';
+                document.getElementById('charEnd').value = c.arcEnd || '';
+            } else {
+                document.getElementById('charModalTitle').textContent = 'Новый персонаж';
+                populateFactionSelect('');
+            }
+            document.getElementById('characterModal').classList.add('open');
+        }
+
+        function saveCharacter(e) {
+            e.preventDefault();
+            const id = document.getElementById('charId').value;
+            const payload = {
+                id: id || 'c_' + Date.now(),
+                name: document.getElementById('charName').value.trim(),
+                role: document.getElementById('charRole').value,
+                factionId: document.getElementById('charFaction').value,
+                tagline: document.getElementById('charTagline').value.trim(),
+                personality: document.getElementById('charPersonality').value.trim(),
+                backstory: document.getElementById('charBackstory').value.trim(),
+                arcStart: document.getElementById('charStart').value.trim(),
+                arcMid: document.getElementById('charMid').value.trim(),
+                arcEnd: document.getElementById('charEnd').value.trim()
+            };
+
+            if (id) {
+                const idx = state.characters.findIndex(c => c.id === id);
+                if (idx !== -1) state.characters[idx] = payload;
+                showToast('Досье героя обновлено');
+            } else {
+                state.characters.push(payload);
+                showToast('Герой добавлен');
+            }
+
+            persistState();
+            closeModal('characterModal');
+            renderCurrentView();
+        }
+
+        function deleteCharacter(id) {
+            state.characters = state.characters.filter(c => c.id !== id);
+            Object.keys(state.matrix).forEach(key => {
+                if (key.startsWith(id + '_')) delete state.matrix[key];
+            });
+            state.stages.forEach(s => {
+                if (Array.isArray(s.characterIds)) {
+                    s.characterIds = s.characterIds.filter(cid => cid !== id);
+                }
+            });
+            persistState();
+            renderCurrentView();
+            showToast('Персонаж удалён');
+        }
+
+        function openFactionModal(id = null) {
+            const form = document.getElementById('factionForm');
+            form.reset();
+            document.getElementById('factionId').value = id || '';
+
+            if (id) {
+                const f = state.factions.find(item => item.id === id);
+                if (!f) return;
+                document.getElementById('factionModalTitle').textContent = 'Редактировать фракцию';
+                document.getElementById('factionName').value = f.name;
+                document.getElementById('factionType').value = f.type || '';
+                document.getElementById('factionColor').value = f.color || 'amber';
+                document.getElementById('factionIdeology').value = f.ideology || '';
+                document.getElementById('factionResources').value = f.resources || '';
+                document.getElementById('factionWeakness').value = f.weakness || '';
+                document.getElementById('factionRelations').value = f.relations || '';
+            } else {
+                document.getElementById('factionModalTitle').textContent = 'Новая фракция';
+            }
+            document.getElementById('factionModal').classList.add('open');
+        }
+
+        function saveFaction(e) {
+            e.preventDefault();
+            const id = document.getElementById('factionId').value;
+            const payload = {
+                id: id || 'f_' + Date.now(),
+                name: document.getElementById('factionName').value.trim(),
+                type: document.getElementById('factionType').value.trim(),
+                color: document.getElementById('factionColor').value,
+                ideology: document.getElementById('factionIdeology').value.trim(),
+                resources: document.getElementById('factionResources').value.trim(),
+                weakness: document.getElementById('factionWeakness').value.trim(),
+                relations: document.getElementById('factionRelations').value.trim()
+            };
+
+            if (id) {
+                const idx = state.factions.findIndex(f => f.id === id);
+                if (idx !== -1) state.factions[idx] = payload;
+                showToast('Фракция обновлена');
+            } else {
+                state.factions.push(payload);
+                showToast('Фракция добавлена');
+            }
+
+            persistState();
+            closeModal('factionModal');
+            renderCurrentView();
+        }
+
+        function deleteFaction(id) {
+            state.factions = state.factions.filter(f => f.id !== id);
+            state.characters.forEach(c => {
+                if (c.factionId === id) c.factionId = '';
+            });
+            persistState();
+            renderCurrentView();
+            showToast('Фракция удалена');
+        }
+
+        function openStageModal(id = null) {
+            const form = document.getElementById('stageForm');
+            form.reset();
+            document.getElementById('stageId').value = id || '';
+
+            let selectedChars = [];
+            if (id) {
+                const s = state.stages.find(item => item.id === id);
+                if (!s) return;
+                document.getElementById('stageModalTitle').textContent = 'Редактировать этап';
+                document.getElementById('stageTitle').value = s.title;
+                document.getElementById('stageLocation').value = s.location || '';
+                document.getElementById('stageStakes').value = s.stakes || '';
+                document.getElementById('stageSummary').value = s.summary || '';
+                selectedChars = s.characterIds || [];
+            } else {
+                document.getElementById('stageModalTitle').textContent = 'Новый этап сюжета';
+            }
+
+            const cbContainer = document.getElementById('stageCharactersCheckboxes');
+            if (state.characters.length === 0) {
+                cbContainer.innerHTML = '<span style="font-size:12px;color:var(--text-muted);">Сначала добавь героев во вкладке «01. Герои»</span>';
+            } else {
+                cbContainer.innerHTML = state.characters.map(c => `
+                    <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary);background:var(--bg-surface);padding:4px 8px;border-radius:5px;border:1px solid var(--border-subtle);cursor:pointer;">
+                        <input type="checkbox" name="stageChar" value="${c.id}" ${selectedChars.includes(c.id) ? 'checked' : ''}>
+                        <span>${escapeHTML(c.name)}</span>
+                    </label>
+                `).join('');
+            }
+
+            document.getElementById('stageModal').classList.add('open');
+        }
+
+        function saveStage(e) {
+            e.preventDefault();
+            const id = document.getElementById('stageId').value;
+            const checked = Array.from(document.querySelectorAll('input[name="stageChar"]:checked')).map(el => el.value);
+
+            const payload = {
+                id: id || 's_' + Date.now(),
+                title: document.getElementById('stageTitle').value.trim(),
+                location: document.getElementById('stageLocation').value.trim(),
+                stakes: document.getElementById('stageStakes').value.trim(),
+                summary: document.getElementById('stageSummary').value.trim(),
+                characterIds: checked
+            };
+
+            if (id) {
+                const idx = state.stages.findIndex(s => s.id === id);
+                if (idx !== -1) state.stages[idx] = payload;
+                showToast('Этап обновлён');
+            } else {
+                state.stages.push(payload);
+                showToast('Этап добавлен в скелет');
+            }
+
+            persistState();
+            closeModal('stageModal');
+            renderCurrentView();
+        }
+
+        function moveStage(index, direction) {
+            const target = index + direction;
+            if (target < 0 || target >= state.stages.length) return;
+            const temp = state.stages[index];
+            state.stages[index] = state.stages[target];
+            state.stages[target] = temp;
+            persistState();
+            renderStages();
+        }
+
+        function deleteStage(id) {
+            state.stages = state.stages.filter(s => s.id !== id);
+            Object.keys(state.matrix).forEach(key => {
+                if (key.endsWith('_' + id)) delete state.matrix[key];
+            });
+            persistState();
+            renderCurrentView();
+            showToast('Этап удалён');
+        }
+
+        function openMatrixModal(charId, stageId) {
+            const char = state.characters.find(c => c.id === charId);
+            const stage = state.stages.find(s => s.id === stageId);
+            if (!char || !stage) return;
+
+            document.getElementById('matrixCharId').value = charId;
+            document.getElementById('matrixStageId').value = stageId;
+            document.getElementById('matrixCellContext').textContent = `${char.name} × ${stage.title}`;
+            document.getElementById('matrixCellInput').value = state.matrix[`${charId}_${stageId}`] || '';
+            document.getElementById('matrixModal').classList.add('open');
+        }
+
+        function saveMatrixCell(e) {
+            e.preventDefault();
+            const charId = document.getElementById('matrixCharId').value;
+            const stageId = document.getElementById('matrixStageId').value;
+            const val = document.getElementById('matrixCellInput').value.trim();
+            const key = `${charId}_${stageId}`;
+
+            if (val) {
+                state.matrix[key] = val;
+            } else {
+                delete state.matrix[key];
+            }
+
+            persistState();
+            closeModal('matrixModal');
+            renderMatrix();
+            showToast('Ячейка матрицы обновлена');
+        }
+
+        /* ================= SESSION CODE & EXPORT ================= */
+        function openStateCodeModal() {
+            const jsonStr = JSON.stringify(state);
+            const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+            document.getElementById('stateCodeTextarea').value = encoded;
+            document.getElementById('stateCodeModal').classList.add('open');
+        }
+
+        function copyStateCode() {
+            const textarea = document.getElementById('stateCodeTextarea');
+            textarea.select();
+            document.execCommand('copy');
+            showToast('Код сессии скопирован!');
+        }
+
+        function loadFromStateCode() {
+            const raw = document.getElementById('stateCodeTextarea').value.trim();
+            if (!raw) {
+                showToast('Вставь код сессии в поле');
+                return;
+            }
+            try {
+                const clean = raw.startsWith('#lore=') ? raw.slice(6) : raw;
+                const jsonStr = decodeURIComponent(escape(atob(clean)));
+                const parsed = JSON.parse(jsonStr);
+                if (Array.isArray(parsed.characters) && Array.isArray(parsed.stages)) {
+                    state = normalizeState(parsed);
+                    document.getElementById('bookTitleInput').value = state.bookTitle;
+                    persistState();
+                    closeModal('stateCodeModal');
+                    renderCurrentView();
+                    showToast('Проект восстановлен из кода!');
+                } else {
+                    showToast('Некорректный формат кода');
+                }
+            } catch (e) {
+                showToast('Ошибка: повреждённый код');
+            }
+        }
+
+        function generateMarkdownText() {
+            let md = `# ${state.bookTitle || 'Прототип книги'}\n\n`;
+            md += `## 1. Персонажи\n\n`;
+            state.characters.forEach((c, i) => {
+                const faction = getFactionById(c.factionId);
+                md += `### ${i + 1}. ${c.name} (${c.role}${faction ? ` — ${faction.name}` : ''})\n`;
+                if (c.tagline) md += `> *${c.tagline}*\n\n`;
+                if (c.personality) md += `- **Характер:** ${c.personality}\n`;
+                if (c.backstory) md += `- **Предыстория:** ${c.backstory}\n`;
+                md += `- **Арка:** [${c.arcStart || '—'}] ➔ [${c.arcMid || '—'}] ➔ [${c.arcEnd || '—'}]\n\n`;
+            });
+
+            md += `## 2. Фракции и организации\n\n`;
+            state.factions.forEach((f, i) => {
+                md += `### ${i + 1}. ${f.name}${f.type ? ` (${f.type})` : ''}\n`;
+                if (f.ideology) md += `- **Идеология:** ${f.ideology}\n`;
+                if (f.resources) md += `- **Ресурсы:** ${f.resources}\n`;
+                if (f.weakness) md += `- **Слабости:** ${f.weakness}\n`;
+                if (f.relations) md += `- **Дипломатия:** ${f.relations}\n\n`;
+            });
+
+            md += `## 3. Скелет сюжета\n\n`;
+            state.stages.forEach((s, idx) => {
+                md += `### Этап ${idx + 1}: ${s.title}\n`;
+                if (s.location) md += `- **Локация:** ${s.location}\n`;
+                if (s.stakes) md += `- **Ставки:** ${s.stakes}\n`;
+                if (s.summary) md += `\n${s.summary}\n`;
+                const notes = state.characters
+                    .map(c => ({ name: c.name, text: state.matrix[`${c.id}_${s.id}`] }))
+                    .filter(item => item.text && item.text.trim());
+                if (notes.length) {
+                    md += `\n**Действия героев:**\n`;
+                    notes.forEach(n => {
+                        md += `- **${n.name}:** ${n.text}\n`;
+                    });
+                }
+                md += `\n`;
+            });
+            return md;
+        }
+
+        function copyMarkdown() {
+            const md = generateMarkdownText();
+            const temp = document.createElement('textarea');
+            temp.value = md;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('Шпаргалка скопирована в Markdown!');
+        }
+
+        function exportJSON() {
+            const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute('href', dataStr);
+            const safeName = (state.bookTitle || 'lore_matrix').replace(/[^a-zA-Zа-яА-Я0-9_-]/g, '_');
+            a.setAttribute('download', `${safeName}.json`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Файл JSON сохранён');
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (Array.isArray(parsed.characters) && Array.isArray(parsed.stages)) {
+                        state = normalizeState(parsed);
+                        document.getElementById('bookTitleInput').value = state.bookTitle;
+                        persistState();
+                        renderCurrentView();
+                        showToast('Проект загружен из JSON');
+                    } else {
+                        showToast('Неверная структура файла JSON');
+                    }
+                } catch (err) {
+                    showToast('Ошибка чтения файла JSON');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function openResetModal() {
+            document.getElementById('resetModal').classList.add('open');
+        }
+
+        function clearAllData() {
+            state = {
+                bookTitle: 'Новая книга',
+                factions: [],
+                characters: [],
+                stages: [],
+                matrix: {}
+            };
+            document.getElementById('bookTitleInput').value = state.bookTitle;
+            persistState();
+            closeModal('resetModal');
+            renderCurrentView();
+            showToast('Проект очищен');
+        }
+
+        function restoreDemoData() {
+            state = normalizeState(JSON.parse(JSON.stringify(DEMO_STATE)));
+            document.getElementById('bookTitleInput').value = state.bookTitle;
+            persistState();
+            closeModal('resetModal');
+            renderCurrentView();
+            showToast('Демо-шаблон восстановлен');
+        }
+
+        window.onload = function() {
+            updateStorageIndicator();
+            document.getElementById('bookTitleInput').value = state.bookTitle;
+            updateBadges();
+            renderCharacters();
+        };
+    </script>
+</body>
+</html>
